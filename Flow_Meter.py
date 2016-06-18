@@ -6,7 +6,7 @@ class Flow_Meter:
     FLOW_METER_PIN = 0
     FLOW_METER_ID = 0
     count = 0
-    current_flow = 0
+    #current_flow = 0
     time_stamp_first = 0
     time_stamp_last = 0
 
@@ -23,6 +23,9 @@ class Flow_Meter:
         if self.time_stamp_first == 0:
             self.time_stamp_first = time.time()*1000.0
         self.time_stamp_last = time.time()*1000.0
+
+    def get_all_info():
+        return time_stamp_first, time_stamp_last, count
 
     def reset():
         self.FLOW_METER_PIN = 0
