@@ -4,6 +4,7 @@ import time
 import math
 import logging
 from Flow_Meter import *
+import RPi.GPIO as GPIO
 
 KEG_PIN_1 = 4
 
