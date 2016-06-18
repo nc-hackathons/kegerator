@@ -24,10 +24,10 @@ class Flow_Meter:
             self.time_stamp_first = time.time()*1000.0
         self.time_stamp_last = time.time()*1000.0
 
-    def get_all_info():
-        return time_stamp_first, time_stamp_last, count
+    def get_all_info(self):
+        return self.time_stamp_first, self.time_stamp_last, self.count
 
-    def reset():
+    def reset(self):
         self.FLOW_METER_PIN = 0
         self.FLOW_METER_ID = 0
         self.count = 0
