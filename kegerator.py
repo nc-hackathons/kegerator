@@ -35,5 +35,6 @@ while True:
   currentTime = int(time.time() * 1000)
   print fm.lastClick
   print fm.thisPour
-  if (fm.thisPour > 0.1 and currentTime - fm.lastClick > 3000): # 10 seconds of inactivity causes a tweet
+  if (currentTime - fm.lastClick > 3000):
     print "Someone just poured " + fm.getFormattedThisPour() + " of beer from the keg"
+    break

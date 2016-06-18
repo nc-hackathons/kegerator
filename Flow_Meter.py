@@ -23,12 +23,12 @@ class Flow_Meter():
   def update(self, currentTime):
     self.clicks += 1
     # get the time delta
-    self.clickDelta = max((currentTime - self.lastClick), 1)
+    self.clickDelta = float(max((currentTime - self.lastClick), 1))
     # calculate the instantaneous speed
-    if (self.enabled == True and self.clickDelta < 1000):
-      self.hertz = 1000 / self.clickDelta
+    if (self.enabled == True and self.clickDelta < 1000.):
+      self.hertz = 1000. / self.clickDelta
       self.flow = self.hertz / (60 * 7.5)  # In Liters per second
-      instPour = self.flow * (self.clickDelta / 1000)
+      instPour = self.flow * (self.clickDelta / 1000.)
       self.thisPour += instPour
       self.totalPour += instPour
     # Update the last click
