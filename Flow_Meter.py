@@ -30,7 +30,7 @@ class Flow_Meter():
     if (self.enabled == True and self.clickDelta < 1000.):
       self.hertz = 1000. / self.clickDelta
       self.flow = self.hertz / (60 * 7.5)  # In Liters per second
-      instPour = self.flow * (self.clickDelta / 1000.)
+      instPour = self.flow * self.clickDelta
       self.thisPour += instPour
       self.totalPour += instPour
     # Update the last click

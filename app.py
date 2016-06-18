@@ -5,6 +5,8 @@ import math
 import logging
 from Flow_Meter import *
 import RPi.GPIO as GPIO
+from models import *
+from sqlalchemy import *
 
 KEG_PIN_1 = 4
 
@@ -22,8 +24,12 @@ def doAClick(channel):
     fm.update(currentTime)
 
 def sendData(flow_meter):
-  flow_meter.getFormattedThisPour()
-  flow_meter.fm_id
+  amount_poured = flow_meter.thisPour
+  keg_id = flow_meter.fm_id
+  current_batch = Batch.query.filter_by(current=True, keg_id=keg_id).first()
+  pour_activity = Pour(current_batch, amount_poured)
+  db.session.add(pour_activity)
+  db.session.commit() # Adds pour to database
 
 """
 def doAClick2(channel):
@@ -36,11 +42,11 @@ GPIO.add_event_detect(KEG_PIN_1, GPIO.RISING, callback=doAClick, bouncetime=20) 
 #GPIO.add_event_detect(24, GPIO.RISING, callback=doAClick2, bouncetime=20) # Root Beer, on Pin 24
 
 # main loop
+print "Starting kegerator monitor"
 while True:
   currentTime = int(time.time() * 1000)
-  print fm.lastClick
-  print fm.thisPour
   if (fm.thisPour > .01 and currentTime - fm.lastClick > 3000):
+    fm.getFormattedThisPour()
     print "Someone just poured " + fm.getFormattedThisPour() + " of beer from the keg"
     sendData(fm)
     fm.reset();
