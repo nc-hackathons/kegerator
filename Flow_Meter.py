@@ -38,16 +38,16 @@ class Flow_Meter():
      return str(self.clickDelta) + ' ms'
 
   def getFormattedHertz(self):
-     return str(round(self.hertz,3)) + ' Hz'
+     return str(self.hertz) + ' Hz'
 
   def getFormattedFlow(self):
-     return str(round(self.flow,3)) + ' L/s'
+     return str(self.flow) + ' L/s'
 
   def getFormattedThisPour(self):
-     return str(round(self.thisPour,3)) + ' L'
+     return str(self.thisPour*0.8) + ' L'
 
   def getFormattedTotalPour(self):
-     return str(round(self.totalPour,3)) + ' L'
+     return str(self.totalPour*0.8) + ' L'
 
   def clear(self):
     self.thisPour = 0;
