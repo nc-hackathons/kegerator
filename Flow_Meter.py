@@ -2,6 +2,7 @@ import time
 class Flow_Meter():
   PINTS_IN_A_LITER = 2.11338
   enabled = True
+  fm_id = 0
   clicks = 0
   lastClick = 0
   clickDelta = 0
@@ -10,7 +11,8 @@ class Flow_Meter():
   thisPour = 0.0 # in Liters
   totalPour = 0.0 # in Liters
 
-  def __init__(self):
+  def __init__(self, fm_id):
+    self.fm_id = fm_id
     self.clicks = 0
     self.lastClick = int(time.time() * 1000)
     self.clickDelta = 0
@@ -49,6 +51,6 @@ class Flow_Meter():
   def getFormattedTotalPour(self):
      return str(self.totalPour*0.8) + ' L'
 
-  def clear(self):
+  def reset(self):
     self.thisPour = 0;
     self.totalPour = 0;

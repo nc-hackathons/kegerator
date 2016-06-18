@@ -13,13 +13,18 @@ GPIO.setup(KEG_PIN_1,GPIO.IN, pull_up_down=GPIO.PUD_UP)
 #GPIO.setup(24,GPIO.IN, pull_up_down=GPIO.PUD_UP)
 
 
-fm = Flow_Meter()
+fm = Flow_Meter(1)
 
 # Beer, on Pin 4
 def doAClick(channel):
   currentTime = int(time.time() * 1000)
   if fm.enabled == True:
     fm.update(currentTime)
+
+def sendData(flow_meter):
+  flow_meter.getFormattedThisPour()
+  flow_meter.fm_id
+
 """
 def doAClick2(channel):
   currentTime = int(time.time() * FlowMeter.MS_IN_A_SECOND)
@@ -37,4 +42,5 @@ while True:
   print fm.thisPour
   if (fm.thisPour > .01 and currentTime - fm.lastClick > 3000):
     print "Someone just poured " + fm.getFormattedThisPour() + " of beer from the keg"
-    break
+    sendData(fm)
+    fm.reset();
