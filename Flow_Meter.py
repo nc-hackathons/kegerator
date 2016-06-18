@@ -54,3 +54,4 @@ class Flow_Meter():
   def reset(self):
     self.thisPour = 0;
     self.totalPour = 0;
+    self.clicks = 0;
