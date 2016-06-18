@@ -37,7 +37,3 @@ while True:
   print fm.thisPour
   if (fm.thisPour > 0.1 and currentTime - fm.lastClick > 3000): # 10 seconds of inactivity causes a tweet
     print "Someone just poured " + fm.getFormattedThisPour() + " of beer from the keg"
-
-  # reset flow meter after each pour (2 secs of inactivity)
-  if (fm.thisPour <= 0.1 and currentTime - fm.lastClick > 2000):
-    fm.thisPour = 0.0
