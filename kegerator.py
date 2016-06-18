@@ -34,9 +34,9 @@ GPIO.add_event_detect(KEG_PIN_1, GPIO.RISING, callback=doAClick, bouncetime=20) 
 while True:
   currentTime = int(time.time() * 1000)
   print fm.lastClick
-  if (currentTime - fm.lastClick > 10000): # 10 seconds of inactivity causes a tweet
+  if (fm.thisPour > 0.1 and currentTime - fm.lastClick > 10000): # 10 seconds of inactivity causes a tweet
     print "Someone just poured " + fm.getFormattedThisPour() + " of beer from the keg"
 
   # reset flow meter after each pour (2 secs of inactivity)
-  if (currentTime - fm.lastClick > 2000):
+  if (fm.thisPour <= 0.1 and currentTime - fm.lastClick > 2000):
     fm.thisPour = 0.0
