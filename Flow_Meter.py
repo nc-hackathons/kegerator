@@ -15,7 +15,7 @@ class Flow_Meter:
         self.FLOW_METER_ID = FLOW_METER_ID
         GPIO.setmode(GPIO.BCM)
         GPIO.setup(self.FLOW_METER_PIN, GPIO.IN, pull_up_down=GPIO.PUD_UP)
-        GPIO.add_event_detect(self.FLOW_METER_PIN, GPIO.RISING, callback=self.process_flow_signal, bouncetime=20)
+        GPIO.add_event_detect(self.FLOW_METER_PIN, GPIO.RISING, callback=self.process_flow_signal, bouncetime=10)
 
     def process_flow_signal(self, flow_meter_pin):
         print str(flow_meter_pin) + "\n"

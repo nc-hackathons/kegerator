@@ -21,4 +21,4 @@ class  Monitor:
             curr_time = time.time()*1000.0
             if self.last_pulse_time_stamp is not 0 and curr_time - self.last_pulse_time_stamp >= 4000:
                 print self.get_info_and_reset_last_pulse_time_stamp()
-		flow_meter.restart()
+		self.flow_meter.reset()
