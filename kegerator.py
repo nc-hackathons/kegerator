@@ -2,9 +2,9 @@ import RPi.GPIO as GPIO
 from Keg import *
 
 FLOW_METER_PIN = 4
-KEG_ID = 1
+FLOW_METER_ID = 1
 
-keg1 = Keg(FLOW_METER_PIN, KEG_ID)
+meter1 = Flow_Meter(FLOW_METER_PIN, FLOW_METER_ID)
 """
 GPIO.setmode(GPIO.BCM)
 GPIO.setup(FLOW_METER_PIN, GPIO.IN, pull_up_down=GPIO.PUD_UP)
