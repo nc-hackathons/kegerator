@@ -1,36 +1,54 @@
-import RPi.GPIO as GPIO
 import time
+class Flow_Meter():
+  PINTS_IN_A_LITER = 2.11338
+  enabled = True
+  clicks = 0
+  lastClick = 0
+  clickDelta = 0
+  hertz = 0.0
+  flow = 0 # in Liters per second
+  thisPour = 0.0 # in Liters
+  totalPour = 0.0 # in Liters
 
+  def __init__(self):
+    self.clicks = 0
+    self.lastClick = int(time.time() * 1000)
+    self.clickDelta = 0
+    self.hertz = 0.0
+    self.flow = 0.0
+    self.thisPour = 0.0
+    self.totalPour = 0.0
+    self.enabled = True
 
-class Flow_Meter:
-    FLOW_METER_PIN = 0
-    FLOW_METER_ID = 0
-    count = 0
-    #current_flow = 0
-    time_stamp_first = 0
-    time_stamp_last = 0
+  def update(self, currentTime):
+    self.clicks += 1
+    # get the time delta
+    self.clickDelta = max((currentTime - self.lastClick), 1)
+    # calculate the instantaneous speed
+    if (self.enabled == True and self.clickDelta < 1000):
+      self.hertz = 1000 / self.clickDelta
+      self.flow = self.hertz / (60 * 7.5)  # In Liters per second
+      instPour = self.flow * (self.clickDelta / 1000)
+      self.thisPour += instPour
+      self.totalPour += instPour
+    # Update the last click
+    self.lastClick = currentTime
 
-    def __init__(self, flow_meter_pin, FLOW_METER_ID):
-        self.FLOW_METER_PIN = flow_meter_pin
-        self.FLOW_METER_ID = FLOW_METER_ID
-        GPIO.setmode(GPIO.BCM)
-        GPIO.setup(self.FLOW_METER_PIN, GPIO.IN, pull_up_down=GPIO.PUD_UP)
-        GPIO.add_event_detect(self.FLOW_METER_PIN, GPIO.RISING, callback=self.process_flow_signal, bouncetime=10)
+  def getFormattedClickDelta(self):
+     return str(self.clickDelta) + ' ms'
 
-    def process_flow_signal(self, flow_meter_pin):
-        print str(flow_meter_pin) + "\n"
-        self.count += 1
-        if self.time_stamp_first == 0:
-            self.time_stamp_first = time.time()*1000.0
-        self.time_stamp_last = time.time()*1000.0
+  def getFormattedHertz(self):
+     return str(round(self.hertz,3)) + ' Hz'
 
-    def get_all_info(self):
-        return self.time_stamp_first, self.time_stamp_last, self.count
+  def getFormattedFlow(self):
+     return str(round(self.flow,3)) + ' L/s'
 
-    def reset(self):
-        self.FLOW_METER_PIN = 0
-        self.FLOW_METER_ID = 0
-        self.count = 0
-        self.current_flow = 0
-        self.time_stamp_first = 0
-        self.time_stamp_last = 0
+  def getFormattedThisPour(self):
+     return str(round(self.thisPour,3)) + ' L'
+
+  def getFormattedTotalPour(self):
+     return str(round(self.totalPour,3)) + ' L'
+
+  def clear(self):
+    self.thisPour = 0;
+    self.totalPour = 0;
