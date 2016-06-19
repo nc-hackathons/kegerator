@@ -21,6 +21,7 @@ sqs = boto3.resource('sqs', region_name='us-east-1')
 queue = sqs.get_queue_by_name(QueueName='keg-o-meter')
 
 fm1 = Flow_Meter(1)
+fm2 = Flow_Meter(2)
 
 # Beer, on Pin 4
 def doAClick(channel):
@@ -30,6 +31,16 @@ def doAClick(channel):
     	send_sqs_message("ON")
         print "Someone just started pouring!"
     fm1.update(currentTime)
+
+
+def doAClick2(channel):
+  currentTime = int(time.time() * 1000)
+  if fm2.enabled == True:
+    if fm2.clicks >= 2:
+        send_sqs_message("ON")
+        print "Someone just started pouring!"
+    fm2.update(currentTime)
+
 
 def send_sqs_message(subject, amount=None):
   message = {
@@ -50,15 +61,6 @@ def sendData(flow_meter):
   send_sqs_message("OFF", amount_poured)
 
 
-def doAClick2(channel):
-  currentTime = int(time.time() * FlowMeter.MS_IN_A_SECOND)
-  if fm2.enabled == True:
-    if fm2.clicks >= 2:
-        send_sqs_message("ON")
-        print "Someone just started pouring!"
-    fm2.update(currentTime)
-
-
 GPIO.add_event_detect(KEG_PIN_1, GPIO.RISING, callback=doAClick, bouncetime=20) # Beer, on Pin 23
 GPIO.add_event_detect(KEG_PIN_2, GPIO.RISING, callback=doAClick2, bouncetime=20) # Root Beer, on Pin 24
 
@@ -66,8 +68,13 @@ GPIO.add_event_detect(KEG_PIN_2, GPIO.RISING, callback=doAClick2, bouncetime=20)
 print "Starting kegerator monitor"
 while True:
   currentTime = int(time.time() * 1000)
-  if (fm.thisPour > .01 and currentTime - fm.lastClick > 3000):
-    fm.thisPour *= 0.7
-    print "Someone just poured " + fm.getFormattedThisPour() + " of beer from the keg"
-    sendData(fm)
-    fm.reset();
+  if (fm1.thisPour > .01 and currentTime - fm1.lastClick > 3000):
+    fm1.thisPour *= 0.7
+    print "Someone just poured " + fm1.getFormattedThisPour() + " of beer from the keg"
+    sendData(fm1)
+    fm1.reset();
+  if (fm2.thisPour > .01 and currentTime - fm2.lastClick > 3000):
+    fm2.thisPour *= 0.7
+    print "Someone just poured " + fm2.getFormattedThisPour() + " of beer from the keg"
+    sendData(fm2)
+    fm2.reset()
