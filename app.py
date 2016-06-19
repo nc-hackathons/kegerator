@@ -63,20 +63,18 @@ def sendData(flow_meter):
   send_sqs_message("OFF", amount_poured)
 
 
-GPIO.add_event_detect(KEG_PIN_1, GPIO.RISING, callback=doAClick, bouncetime=20) # Beer, on Pin 23
-GPIO.add_event_detect(KEG_PIN_2, GPIO.RISING, callback=doAClick2, bouncetime=20) # Root Beer, on Pin 24
+GPIO.add_event_detect(KEG_PIN_1, GPIO.RISING, callback=doAClick, bouncetime=10) # Beer, on Pin 23
+GPIO.add_event_detect(KEG_PIN_2, GPIO.RISING, callback=doAClick2, bouncetime=10) # Root Beer, on Pin 24
 
 # main loop
 print "Starting kegerator monitor"
 while True:
   currentTime = int(time.time() * 1000)
   if (fm1.thisPour > .01 and currentTime - fm1.lastClick > 3000):
-    fm1.thisPour *= 0.7
     print "Someone just poured " + fm1.getFormattedThisPour() + " of beer from the keg 1"
     sendData(fm1)
     fm1.reset();
   if (fm2.thisPour > .01 and currentTime - fm2.lastClick > 3000):
-    fm2.thisPour *= 0.7
     print "Someone just poured " + fm2.getFormattedThisPour() + " of beer from the keg 2"
     sendData(fm2)
     fm2.reset()
