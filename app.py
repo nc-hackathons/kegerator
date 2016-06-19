@@ -11,24 +11,25 @@ from models import *
 from sqlalchemy import *
 
 KEG_PIN_1 = 4
+KEG_PIN_2 = 21
 
 GPIO.setmode(GPIO.BCM) # use real GPIO numbering
 GPIO.setup(KEG_PIN_1,GPIO.IN, pull_up_down=GPIO.PUD_UP)
-#GPIO.setup(24,GPIO.IN, pull_up_down=GPIO.PUD_UP)
+GPIO.setup(KEG_PIN_2,GPIO.IN, pull_up_down=GPIO.PUD_UP)
 
 sqs = boto3.resource('sqs', region_name='us-east-1')
 queue = sqs.get_queue_by_name(QueueName='keg-o-meter')
 
-fm = Flow_Meter(1)
+fm1 = Flow_Meter(1)
 
 # Beer, on Pin 4
 def doAClick(channel):
   currentTime = int(time.time() * 1000)
-  if fm.enabled == True:
-    if fm.clicks == 0:
-	send_sqs_message("ON")
-	print "Someone just started pouring!"
-    fm.update(currentTime)
+  if fm1.enabled == True:
+    if fm1.clicks >= 2:
+    	send_sqs_message("ON")
+        print "Someone just started pouring!"
+    fm1.update(currentTime)
 
 def send_sqs_message(subject, amount=None):
   message = {
@@ -36,7 +37,7 @@ def send_sqs_message(subject, amount=None):
   }
   if amount is not None:
     message['beer'] = amount
-  queue.send_message(MessageBody=json.dumps(message)) 
+  queue.send_message(MessageBody=json.dumps(message))
 
 
 def sendData(flow_meter):
@@ -48,21 +49,25 @@ def sendData(flow_meter):
   db.session.commit() # Adds pour to database
   send_sqs_message("OFF", amount_poured)
 
-"""
+
 def doAClick2(channel):
   currentTime = int(time.time() * FlowMeter.MS_IN_A_SECOND)
   if fm2.enabled == True:
+    if fm2.clicks >= 2:
+        send_sqs_message("ON")
+        print "Someone just started pouring!"
     fm2.update(currentTime)
-"""
+
 
 GPIO.add_event_detect(KEG_PIN_1, GPIO.RISING, callback=doAClick, bouncetime=20) # Beer, on Pin 23
-#GPIO.add_event_detect(24, GPIO.RISING, callback=doAClick2, bouncetime=20) # Root Beer, on Pin 24
+GPIO.add_event_detect(KEG_PIN_2, GPIO.RISING, callback=doAClick2, bouncetime=20) # Root Beer, on Pin 24
 
 # main loop
 print "Starting kegerator monitor"
 while True:
   currentTime = int(time.time() * 1000)
   if (fm.thisPour > .01 and currentTime - fm.lastClick > 3000):
+    fm.thisPour *= 0.7
     print "Someone just poured " + fm.getFormattedThisPour() + " of beer from the keg"
     sendData(fm)
     fm.reset();
