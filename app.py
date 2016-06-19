@@ -27,7 +27,8 @@ fm2 = Flow_Meter(2)
 def doAClick(channel):
   currentTime = int(time.time() * 1000)
   if fm1.enabled == True:
-    if fm1.clicks >= 2:
+    if fm1.clicks >= 2 and fm1.start_pouring == True:
+        fm1.start_pouring = False
     	send_sqs_message("ON")
         print "Someone just started pouring!"
     fm1.update(currentTime)
@@ -36,7 +37,8 @@ def doAClick(channel):
 def doAClick2(channel):
   currentTime = int(time.time() * 1000)
   if fm2.enabled == True:
-    if fm2.clicks >= 2:
+    if fm2.clicks >= 2 and fm2.start_pouring == True:
+        fm2.start_pouring = False
         send_sqs_message("ON")
         print "Someone just started pouring!"
     fm2.update(currentTime)
@@ -70,11 +72,11 @@ while True:
   currentTime = int(time.time() * 1000)
   if (fm1.thisPour > .01 and currentTime - fm1.lastClick > 3000):
     fm1.thisPour *= 0.7
-    print "Someone just poured " + fm1.getFormattedThisPour() + " of beer from the keg"
+    print "Someone just poured " + fm1.getFormattedThisPour() + " of beer from the keg 1"
     sendData(fm1)
     fm1.reset();
   if (fm2.thisPour > .01 and currentTime - fm2.lastClick > 3000):
     fm2.thisPour *= 0.7
-    print "Someone just poured " + fm2.getFormattedThisPour() + " of beer from the keg"
+    print "Someone just poured " + fm2.getFormattedThisPour() + " of beer from the keg 2"
     sendData(fm2)
     fm2.reset()

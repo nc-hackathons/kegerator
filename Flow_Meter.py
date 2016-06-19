@@ -1,6 +1,7 @@
 import time
 class Flow_Meter():
   enabled = True
+  start_pouring = True
   fm_id = 0
   clicks = 0
   lastClick = 0
@@ -48,3 +49,4 @@ class Flow_Meter():
   def reset(self):
     self.thisPour = 0;
     self.clicks = 0;
+    self.start_pouring = True
