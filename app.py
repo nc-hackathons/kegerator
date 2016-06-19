@@ -71,10 +71,10 @@ print "Starting kegerator monitor"
 while True:
   currentTime = int(time.time() * 1000)
   if (fm1.thisPour > .01 and currentTime - fm1.lastClick > 3000):
-    print "Someone just poured " + fm1.getFormattedThisPour() + " of beer from the keg 1"
+    print "Someone just poured " + fm1.getFormattedThisPour() + " of beer from keg 1"
     sendData(fm1)
     fm1.reset();
   if (fm2.thisPour > .01 and currentTime - fm2.lastClick > 3000):
-    print "Someone just poured " + fm2.getFormattedThisPour() + " of beer from the keg 2"
+    print "Someone just poured " + fm2.getFormattedThisPour() + " of beer from keg 2"
     sendData(fm2)
     fm2.reset()
