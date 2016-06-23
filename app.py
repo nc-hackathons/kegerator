@@ -6,10 +6,9 @@ import logging
 import json
 from Flow_Meter import *
 import RPi.GPIO as GPIO
-from models import *
-from sqlalchemy import *
 
 import httplib
+import requests
 
 KEG_PIN_1 = 4
 KEG_PIN_2 = 21
@@ -18,8 +17,8 @@ GPIO.setmode(GPIO.BCM) # use real GPIO numbering
 GPIO.setup(KEG_PIN_1,GPIO.IN, pull_up_down=GPIO.PUD_UP)
 GPIO.setup(KEG_PIN_2,GPIO.IN, pull_up_down=GPIO.PUD_UP)
 
-fm1 = Flow_Meter(1)
-fm2 = Flow_Meter(2)
+fm1 = Flow_Meter(2)
+fm2 = Flow_Meter(1)
 
 # Beer, on Pin 4
 def doAClick(channel):
@@ -51,13 +50,10 @@ def doAClick2(channel):
 def sendData(flow_meter):
   amount_poured = flow_meter.thisPour
   keg_id = flow_meter.fm_id
-  current_batch = Batch.query.filter_by(current=True, keg_id=keg_id).first()
-  pour_activity = Pour(current_batch, amount_poured)
-  db.session.add(pour_activity)
-  db.session.commit() # Adds pour to database
   conn = httplib.HTTPConnection("localhost", 5000)
   headers = {"Content-type": "application/json"}
-  conn.request("POST", "/pour_event", "{ \"keg\": %(keg_id)s, \"tap_position\": \"OFF\" }" % locals(), headers)
+  requests.post("http://localhost:5000/pour_event", json={ "keg": keg_id, "tap_position": "OFF", "amount_poured": amount_poured })
+  #conn.request("POST", "/pour_event", "{ \"keg\": %(keg_id)s, \"tap_position\": \"OFF\", \"amount_poured\": %s(amount_poured)s }" % locals(), headers)
 
 
 GPIO.add_event_detect(KEG_PIN_1, GPIO.RISING, callback=doAClick, bouncetime=10) # Beer, on Pin 23
